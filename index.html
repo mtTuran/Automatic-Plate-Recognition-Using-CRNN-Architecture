@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Test</title>
+</head>
+<body>
+    <h2>Upload an Image</h2>
+    <form id="uploadForm" enctype="multipart/form-data">
+        <input type="file" id="imageInput" name="image" accept="image/*" required>
+        <button type="submit">Upload Image</button>
+    </form>
+
+    <div id="response"></div>
+
+    <script>
+        // Handle the form submission
+        document.getElementById('uploadForm').addEventListener('submit', async function(event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            // Get the file input
+            const imageInput = document.getElementById('imageInput');
+            const file = imageInput.files[0];
+
+            // Ensure that a file is selected
+            if (!file) {
+                alert("Please choose an image.");
+                return;
+            }
+
+            // Create a FormData object to send the image as multipart form-data
+            const formData = new FormData();
+            formData.append('image', file);
+
+            try {
+                // Send the image to the API using the Fetch API
+                const response = await fetch('http://localhost:5000/predict', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                // Parse the JSON response
+                const result = await response.json();
+
+                // Display the result in the page
+                document.getElementById('response').textContent = JSON.stringify(result);
+            } catch (error) {
+                console.error('Error uploading image:', error);
+                document.getElementById('response').textContent = 'Error uploading image.';
+            }
+        });
+    </script>
+</body>
+</html>
